@@ -1,30 +1,37 @@
-const express = require('express')
+const app = require('express')()
+const server = require('http').Server(app)
+const io = require('socket.io')(server)
 const next = require('next')
+
 import api from './api'
 
 const dev = process.env.NODE_ENV !== 'production'
-const app = next({ dev })
-const handle = app.getRequestHandler()
+const nextApp = next({ dev })
+const nextHandler = nextApp.getRequestHandler()
 
-app.prepare()
-.then(() => {
-  const server = express()
+io.on('connect', (socket) => {
+  socket.emit('hello', { message: 'Hello World' })
+  console.count('User connected')
 
-  server.use('/api', api)
+  socket.on('message', (msg: string) => {io.emit('broad', msg)})
+})
 
-  server.get('/p/:id', (req, res) => {
+nextApp.prepare().then(() => {
+  app.use('/api', api)
+
+  app.get('/p/:id', (req, res) => {
     const actualPage = '/post'
     const queryParams = { id: req.params.id }
     app.render(req, res, actualPage, queryParams)
   })
 
-  server.get('*', (req, res) => {
-    return handle(req, res)
+  app.get('*', (req, res) => {
+    return nextHandler(req, res)
   })
 
-  server.listen(process.env.PORT || 3000, (err) => {
+  server.listen(process.env.PORT || 3030, (err) => {
     if (err) throw err
-    console.log(`> Ready on http://localhost:${process.env.PORT || 3000}`)
+    console.log(`> Ready on http://localhost:${process.env.PORT || 3030}`)
   })
 })
 .catch((ex:any) => {

@@ -17,6 +17,11 @@ const Header = () => {
             <a className={cn('nav-link', styles.link)}>About</a>
           </Link>
         </li>
+        <li className='nav-item'>
+          <Link href='/chat' activeClassName='active'>
+            <a className={cn('nav-link', styles.link)}>Chat</a>
+          </Link>
+        </li>
       </ul>
     </Fragment>
   )
