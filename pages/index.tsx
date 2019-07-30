@@ -1,20 +1,36 @@
-import React from 'react'
-import Shows from 'Components/Shows'
-import fetch from 'isomorphic-unfetch'
+import React, { useState } from 'react'
+import withSocket, { WithSocket } from 'Src/hoc/with-socket'
 
-const Index = (props) => (
-  <Shows shows={props.shows} />
-)
+const Chat = (props: WithSocket) => {
+  const [value, setValue] = useState<string>('')
 
-Index.getInitialProps = async () => {
-  const res = await fetch('https://api.tvmaze.com/search/shows?q=batman')
-  const data = await res.json()
-
-  console.log(`Show data fetched. Count: ${data.length}`)
-
-  return {
-    shows: data
+  const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    props.onSubmit(value)
+    setValue('')
   }
+
+  const onChange = (e: React.FormEvent<HTMLInputElement>) => {
+    const val = e.currentTarget.value
+    setValue(val)
+  }
+
+  const renderMessages = () => {
+    return props.messages.map((msg) => <li key={msg}>{msg}</li>)
+  }
+
+  return (
+    <div>
+      <h1>Chat Box</h1>
+      <input type='text' value={value} onChange={onChange} />
+      <button type='submit' onClick={onSubmit}>Submit</button>
+      <ul>
+        {renderMessages()}
+      </ul>
+    </div>
+  )
 }
 
-export default Index
+// Chat.getInitialProps = async (context) => {}
+
+export default withSocket(Chat)

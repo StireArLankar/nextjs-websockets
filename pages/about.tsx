@@ -1,7 +1,11 @@
 import React, { Fragment } from 'react'
 
-export default () => (
-  <Fragment>
-    <p>This is the about page</p>
-  </Fragment>
-)
+const About = () => {
+  return (
+    <Fragment>
+      <p>This is the about page</p>
+    </Fragment>
+  )
+}
+
+export default About
